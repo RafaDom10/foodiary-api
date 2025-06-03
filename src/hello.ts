@@ -1,6 +1,7 @@
+import { HelloController } from './application/controllers/HelloController';
+
+const controller = new HelloController();
+
 export async function handler() {
-  return {
-    statusCode: 200,
-    body: 'Hello handler successfully executed!',
-  };
+  return controller.handle();
 }
