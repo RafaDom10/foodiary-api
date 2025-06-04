@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { IController } from '../contracts/Controller';
+import { Controller } from '../contracts/Controller';
 
 const schema = z.object({
   account: z.object({
@@ -8,13 +8,13 @@ const schema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid Email'),
 });
 
-export class HelloController implements IController<unknown> {
-  async handle(request: IController.Request): Promise<IController.Response<unknown>> {
-    const parsedBody = schema.parse(request.body);
+export class HelloController extends Controller<unknown> {
+  protected override schema = schema;
 
+  protected override async handle(request: Controller.Request): Promise<Controller.Response<unknown>> {
     return {
       statusCode: 200,
-      body: { parsedBody },
+      body: { parsedBody: request.body },
     };
   }
 }
