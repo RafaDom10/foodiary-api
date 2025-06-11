@@ -13,6 +13,7 @@
       "@application/*": ["src/application/*"],
       "@kernel/*": ["src/kernel/*"],
       "@main/*": ["src/main/*"],
+      "@shared/*": ["src/shared/*"],
     }
   }
 }
