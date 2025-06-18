@@ -2,7 +2,7 @@ Resources:
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: ${self:service}-api-${self:provider.stage}-UserPool
+      UserPoolName: ${self:custom.cognito.PoolName}
       DeletionProtection: INACTIVE
       MfaConfiguration: OFF
       AutoVerifiedAttributes:
