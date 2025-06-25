@@ -1,3 +1,4 @@
+import { EmailAlreadyInUseError } from '@application/errors/application/EmailAlreadyInUseError';
 import { AccountRepository } from '@infra/database/dynamo/repositories/AccountRepository';
 import { AuthGateway } from '@infra/gateways/AuthGateway';
 import { Injectable } from '@kernel/decorators/Injectable';
@@ -17,7 +18,7 @@ export class SignUpUseCase {
     const emailAlreadyInUse = await this.accountRepository.findEmail(email);
 
     if (emailAlreadyInUse) {
-      throw new Error('This email already in use');
+      throw new EmailAlreadyInUseError();
     }
 
     const { externalId } = await this.authGateway.signUp({ email, password });
