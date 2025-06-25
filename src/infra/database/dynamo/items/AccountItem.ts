@@ -28,6 +28,15 @@ export class AccountItem {
     });
   }
 
+  static toEntity(accountItem: AccountItem.ItemType) {
+    return new Account({
+      id: accountItem.id,
+      createdAt: new Date(accountItem.createdAt),
+      email: accountItem.email,
+      externalId: accountItem.externalId,
+    });
+  }
+
   static getPK(accountId: string): AccountItem.Keys['PK'] {
     return `ACCOUNT#${accountId}`;
   }
