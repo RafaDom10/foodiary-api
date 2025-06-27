@@ -1,3 +1,4 @@
+import { InvalidRefreshTokenError } from '@application/errors/application/InvalidRefreshTokenError';
 import { GetTokensFromRefreshTokenCommand, InitiateAuthCommand, SignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { cognitoClient } from '@infra/clients/cognitoClient';
 import { Injectable } from '@kernel/decorators/Injectable';
@@ -59,22 +60,26 @@ export class AuthGateway {
   }
 
   async refreshToken({ refreshToken }: AuthGateway.RefreshTokenParams): Promise<AuthGateway.RefreshTokenResult> {
-    const command = new GetTokensFromRefreshTokenCommand({
-      ClientId: this.appConfig.auth.cognito.client.id,
-      RefreshToken: refreshToken,
-      ClientSecret: this.appConfig.auth.cognito.client.secret,
-    });
+    try {
+      const command = new GetTokensFromRefreshTokenCommand({
+        ClientId: this.appConfig.auth.cognito.client.id,
+        RefreshToken: refreshToken,
+        ClientSecret: this.appConfig.auth.cognito.client.secret,
+      });
 
-    const { AuthenticationResult } = await cognitoClient.send(command);
+      const { AuthenticationResult } = await cognitoClient.send(command);
 
-    if (!AuthenticationResult?.AccessToken || !AuthenticationResult?.RefreshToken) {
-      throw new Error('Cannot refresh token.');
+      if (!AuthenticationResult?.AccessToken || !AuthenticationResult?.RefreshToken) {
+        throw new Error('Cannot refresh token.');
+      }
+
+      return {
+        accessToken: AuthenticationResult.AccessToken,
+        refreshToken: AuthenticationResult.RefreshToken,
+      };
+    } catch {
+      throw new InvalidRefreshTokenError();
     }
-
-    return {
-      accessToken: AuthenticationResult.AccessToken,
-      refreshToken: AuthenticationResult.RefreshToken,
-    };
   }
 
   private getSecretHash(email: string) {
